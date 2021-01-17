@@ -310,7 +310,10 @@ namespace Testing
 				fn.Invoke();
 				++_passedTests;
 			}
-			catch (SuccessException) {}
+			catch (SuccessException) 
+			{
+				++_passedTests;
+			}
 			catch (Exception ex)
 			{
 				_failedTestData.Add(name, ex);
@@ -338,17 +341,17 @@ namespace Testing
 		public static void RunTests(Action fn)
 		{
 			var timeMilliseconds = Test.Time(fn);
-            var failedTestData = Test.FailedTestData;
-            foreach (var f in failedTestData)
-            {
-                Console.WriteLine($"Test '{f.Key}' failed: {f.Value.Message}\n{f.Value.StackTrace}");
-            }
+			var failedTestData = Test.FailedTestData;
+			foreach (var f in failedTestData)
+			{
+				Console.WriteLine($"Test '{f.Key}' failed: {f.Value.Message}\n{f.Value.StackTrace}");
+			}
 
-            Console.WriteLine($"Test Count: {Test.TestCount}");
-            Console.WriteLine($"Tests Passed: {Test.PassedTests}");
-            Console.WriteLine($"Tests Failed: {(Test.TestCount - Test.PassedTests)}");
-            Console.WriteLine($"elapsed milliseconds: {timeMilliseconds}");
-            Console.WriteLine($"elapsed seconds: {(timeMilliseconds / 1000.0)}");
+			Console.WriteLine($"Test Count: {Test.TestCount}");
+			Console.WriteLine($"Tests Passed: {Test.PassedTests}");
+			Console.WriteLine($"Tests Failed: {(Test.TestCount - Test.PassedTests)}");
+			Console.WriteLine($"elapsed milliseconds: {timeMilliseconds}");
+			Console.WriteLine($"elapsed seconds: {(timeMilliseconds / 1000.0)}");
 		}
 	}
 
