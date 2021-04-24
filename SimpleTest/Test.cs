@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Testing
+namespace SimpleTest
 {
 	public class SuccessException : Exception {}
 
@@ -49,7 +49,7 @@ namespace Testing
 				fn.Invoke();
 				Interlocked.Add(ref _passedTests, 1);
 			}
-			catch (SuccessException) 
+			catch (SuccessException)
 			{
 				Interlocked.Add(ref _passedTests, 1);
 			}

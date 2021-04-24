@@ -1,7 +1,7 @@
 
 using System;
 
-namespace Testing
+namespace SimpleTest
 {
 	public static class TestConsole
 	{

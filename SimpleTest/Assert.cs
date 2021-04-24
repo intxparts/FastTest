@@ -1,13 +1,13 @@
 using System;
 
-namespace Testing
+namespace SimpleTest
 {
 	public static class Assert
 	{
 		public static void AreEqual<T>(T expectedValue, T actualValue) where T : struct
 		{
 			if (!expectedValue.Equals(actualValue))
-				throw new Exception($"Expected value: {expectedValue} does not match the Actual value: {actualValue}");
+				throw new Exception($"Expected value: '{expectedValue}' does not match the Actual value: '{actualValue}'");
 		}
 
 		public static void AreEqual(string expectedValue, string actualValue)
@@ -19,7 +19,7 @@ namespace Testing
 		public static void AreNotEqual<T>(T expectedValue, T actualValue) where T : struct
 		{
 			if (expectedValue.Equals(actualValue))
-				throw new Exception($"Expected value: {expectedValue} matches the Actual value: {actualValue}");
+				throw new Exception($"Expected value: '{expectedValue}' matches the Actual value: '{actualValue}'");
 		}
 
 		public static void AreNotEqual(string expectedValue, string actualValue)
