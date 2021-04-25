@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace SimpleTest
 {
-	public class SuccessException : Exception {}
-
 	public static class Test
 	{
 		private static ConcurrentDictionary<string, Exception> _failedTestData = new ConcurrentDictionary<string, Exception>();

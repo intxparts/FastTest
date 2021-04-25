@@ -2,6 +2,11 @@ using System;
 
 namespace SimpleTest
 {
+	public class SuccessException : Exception
+	{
+		public SuccessException(string message) : base(message){}
+	}
+
 	public static class Assert
 	{
 		public static void AreEqual<T>(T expectedValue, T actualValue) where T : struct
@@ -64,15 +69,16 @@ namespace SimpleTest
 				throw new Exception($"Expected object to be not null but was null");
 		}
 
-		public static void Throws<T>(Action fn) where T : Exception
+		public static Exception Throws<T>(Action fn) where T : Exception
 		{
 			try
 			{
 				fn.Invoke();
 				throw new Exception($"Expected function to throw an exception of type: {typeof(T)}");
 			}
-			catch
+			catch (Exception ex)
 			{
+				return ex;
 			}
 		}
 
@@ -88,9 +94,9 @@ namespace SimpleTest
 			}
 		}
 
-		public static void Pass()
+		public static void Pass(string message)
 		{
-			throw new SuccessException();
+			throw new SuccessException(message);
 		}
 
 		public static void Fail(string message)

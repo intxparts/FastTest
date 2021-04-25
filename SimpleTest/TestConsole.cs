@@ -1,11 +1,16 @@
-
 using System;
 
 namespace SimpleTest
 {
+	public enum ExitCode : int 
+	{
+		Success = 0,
+		FailedTest = 1,
+	}
+
 	public static class TestConsole
 	{
-		public static void RunTests(Action fn)
+		public static ExitCode RunTests(Action fn)
 		{
 			var timeMilliseconds = Test.Time(fn);
 			var failedTestData = Test.FailedTestData;
@@ -19,6 +24,8 @@ namespace SimpleTest
 			Console.WriteLine($"Tests Failed: {(Test.TestCount - Test.PassedTests)}");
 			Console.WriteLine($"elapsed milliseconds: {timeMilliseconds}");
 			Console.WriteLine($"elapsed seconds: {(timeMilliseconds / 1000.0)}");
+
+			return failedTestData.Count > 0 ? ExitCode.FailedTest : ExitCode.Success;
 		}
 	}
 }
