@@ -10,6 +10,10 @@ namespace Tests
 		{
 			var exitCode = TestConsole.RunTests(() => {
 				RunAssertTests();
+
+				Test.Run("Test failure", () => {
+					Assert.Fail("Testing failure with github action integration");
+				});
 			});
 
 			Environment.Exit((int) exitCode);
