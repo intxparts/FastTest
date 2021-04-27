@@ -73,13 +73,19 @@ namespace SimpleTest
 		{
 			try
 			{
-				fn.Invoke();
-				throw new Exception($"Expected function to throw an exception of type: {typeof(T)}");
+				try
+				{
+					fn.Invoke();
+				}
+				catch (T ex)
+				{
+					return ex;
+				}
 			}
-			catch (Exception ex)
+			catch
 			{
-				return ex;
 			}
+			throw new Exception($"Expected fn to throw an exception of type: {typeof(T)}");
 		}
 
 		public static void DoesNotThrow(Action fn)
@@ -90,7 +96,7 @@ namespace SimpleTest
 			}
 			catch (Exception)
 			{
-				throw new Exception($"Expected function to not throw an exception");
+				throw new Exception($"Expected function to not throw an Exception");
 			}
 		}
 

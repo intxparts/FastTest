@@ -9,6 +9,15 @@ namespace Tests
 		static void Main(string[] args)
 		{
 			var exitCode = TestConsole.RunTests(() => {
+				
+				Test.Run("Test.Time(Action fn) estimates the elapsed amount of time (ms) to run fn.", () => {
+					var timeMilliseconds = Test.Time(() => {
+						Thread.Sleep(25);
+					});
+
+					Assert.IsGreaterThanOrEqual(timeMilliseconds, 25);
+				});
+				
 				RunAssertTests();
 			});
 
@@ -21,16 +30,116 @@ namespace Tests
 			public double Y;
 			public double Z;
 		}
+		
+		public class FakeException : Exception 
+		{
+			public FakeException() : base("FakeException"){}
+		}
 
 		static void RunAssertTests()
 		{
-			Test.Run("Test.Time(Action fn) estimates the elapsed amount of time (ms) to run fn.", () => {
-				var timeMilliseconds = Test.Time(() => {
-					Thread.Sleep(25);
-				});
-
-				Assert.IsGreaterThanOrEqual(timeMilliseconds, 25);
+		
+		#region Assert.DoesNotThrow
+		
+			Test.Run("Assert.DoesNotThrow(Action fn) raises an Exception when an Exception is thrown in fn", () => {
+				string message = "";
+				
+				try {
+					Assert.DoesNotThrow(() => { throw new Exception(); });
+				}
+				catch (Exception ex)
+				{
+					message = ex.Message;
+				}
+				Assert.AreEqual("Expected function to not throw an Exception", message);
 			});
+			
+			Test.Run("Assert.DoesNotThrow(Action fn) does not throw an Exception when an Exception is not thrown in fn", () => {
+				bool success = true;
+				try {
+					Assert.DoesNotThrow(() => {});
+				}
+				catch
+				{
+					success = false;
+				}
+				Assert.IsTrue(success);
+			});
+		
+		#endregion
+		
+		#region Assert.Throws<T>
+			Test.Run("Assert.Throws<Exception>(Action fn) raises an Exception when Exception is not thrown in fn", () => {
+				string message = "";
+				try {
+					Assert.Throws<Exception>(() => {});
+				}
+				catch (Exception ex)
+				{
+					message = ex.Message;
+				}
+				Assert.AreEqual("Expected fn to throw an exception of type: System.Exception", message);
+			});
+			
+			Test.Run("Assert.Throws<Exception>(Action fn) does not raise an Exception when fn throws an Exception", () => {
+				Exception exception = null;
+				try {
+					exception = Assert.Throws<Exception>(() => { throw new FakeException(); });
+				}
+				catch
+				{
+				}
+				Assert.AreEqual("FakeException", exception.Message);
+			});
+			
+			Test.Run("Assert.Throws<FakeException>(Action fn) raises an Exception when a FakeException is not thrown in fn", () => {
+				string message = "";
+				try {
+					Assert.Throws<FakeException>(() => {});
+				}
+				catch (Exception ex)
+				{
+					message = ex.Message;
+				}
+				Assert.AreEqual("Expected fn to throw an exception of type: Tests.Program+FakeException", message);
+			});
+			
+			Test.Run("Assert.Throws<FakeException>(Action fn) raises an Exception when an Exception not derived from FakeException is thrown in fn", () => {
+				string message = "";
+				try {
+					Assert.Throws<FakeException>(() => { throw new Exception("wrong exception to throw"); });
+				}
+				catch (Exception ex)
+				{
+					message = ex.Message;
+				}
+				Assert.AreEqual("Expected fn to throw an exception of type: Tests.Program+FakeException", message);
+			});
+			
+			Test.Run("Assert.Throws<Exception>(Action fn) does not raise an Exception when fn throws an Exception", () => {
+				Exception exception = null;
+				try {
+					exception = Assert.Throws<Exception>(() => { throw new Exception("custom"); });
+				}
+				catch
+				{
+				}
+				Assert.AreEqual("custom", exception.Message);
+			});
+			
+			Test.Run("Assert.Throws<FakeException>(Action fn) does not raise an Exception when fn throws a FakeException", () => {
+				Exception exception = null;
+				try {
+					exception = Assert.Throws<FakeException>(() => { throw new FakeException(); });
+				}
+				catch
+				{
+				}
+				Assert.AreEqual("FakeException", exception.Message);
+			});
+		#endregion
+
+		#region Assert.IsTrue/False
 
 			Test.Run("Assert.IsTrue(bool cond) raises an exception when cond is false", () => {
 				var exception = Assert.Throws<Exception>(() => {
@@ -58,7 +167,10 @@ namespace Tests
 					Assert.IsFalse(false);
 				});
 			});
+			
+		#endregion
 
+		#region Assert.Pass/Fail
 			Test.Run("Assert.Pass(string message) raises a SuccessException with message", () => {
 				var exception = Assert.Throws<SuccessException>(() => {
 					Assert.Pass("Condition met.");
@@ -72,7 +184,10 @@ namespace Tests
 				});
 				Assert.AreEqual(exception.Message, "Fail now.");
 			});
-			
+		#endregion
+		
+		#region Assert.IsNull/NotNull
+		
 			Test.Run("Assert.IsNull(object obj) raises an Exception when obj is not null", () => {
 				var exception = Assert.Throws<Exception>(() => {
 					Assert.IsNull("");
@@ -98,8 +213,9 @@ namespace Tests
 					Assert.IsNotNull("");
 				});
 			});
+		#endregion
 
-		#region AreEqual string
+		#region AreEqual/NotEqual string (ref)
 			Test.Run("Assert.AreEqual(string expected, string actual) raises an Exception when actual is not equal to expected", () => {
 				var exception = Assert.Throws<Exception>(() => {
 					Assert.AreEqual("expected", "actual");
@@ -127,7 +243,7 @@ namespace Tests
 			});
 		#endregion
 
-		#region AreEqual int
+		#region AreEqual/NotEqual int (struct)
 			Test.Run("Assert.AreEqual(int expected, int actual) raises an Exception when actual is not equal to expected", () => {
 				var exception = Assert.Throws<Exception>(() => {
 					Assert.AreEqual(10, 5);
@@ -155,6 +271,7 @@ namespace Tests
 			});
 		#endregion
 
+		#region Assert.AreSame
 			Test.Run("Assert.AreSame(class expected, class actual) raises an Exception when actual is not the same object as expected", () => {
 				var exception = Assert.Throws<Exception>(() => {
 					var v1 = new Vector() { X = 0, Y = 1, Z = 0 };
@@ -171,7 +288,7 @@ namespace Tests
 					Assert.AreSame(v1, v2);
 				});
 			});
-		
+
 			Test.Run("Assert.AreNotSame(class expected, class actual) raises an Exception when actual is the same object as expected", () => {
 				var exception = Assert.Throws<Exception>(() => {
 					var v1 = new Vector() { X = 0, Y = 1, Z = 0 };
@@ -188,7 +305,55 @@ namespace Tests
 					Assert.AreNotSame(v1, v2);
 				});
 			});
-
+		#endregion
+		
+		#region Assert.IsGreaterThan (int)
+		
+			Test.Run("Assert.IsGreaterThan(int left, int right) throws an Exception when right is greater than or left", () => {
+				var exception = Assert.Throws<Exception>(() => {
+					Assert.IsGreaterThan(2, 10);
+				});
+				Assert.AreEqual(exception.Message, "Expected 2 to be greater than 10");
+			});
+			
+			Test.Run("Assert.IsGreaterThan(int left, int right) throws an Exception when right is equal to left", () => {
+				var exception = Assert.Throws<Exception>(() => {
+					Assert.IsGreaterThan(5, 5);
+				});
+				Assert.AreEqual(exception.Message, "Expected 5 to be greater than 5");
+			});
+			
+			Test.Run("Assert.IsGreaterThan(int left, int right) does not raise an Exception when left is greater than right", () => {
+				Assert.DoesNotThrow(() => {
+					Assert.IsGreaterThan(10, 3);
+				});
+			});
+		
+		#endregion
+		
+		#region Assert.IsGreaterThanOrEqual (int)
+		
+			Test.Run("Assert.IsGreaterThanOrEqual(int left, int right) raises an Exception when right is greater than left", () => {
+				var exception = Assert.Throws<Exception>(() => {
+					Assert.IsGreaterThanOrEqual(2, 5);
+				});
+				Assert.AreEqual(exception.Message, "Expected 2 to be greater than or equal to 5");
+			});
+		
+			Test.Run("Assert.IsGreaterThanOrEqual(int left, int right) does not raise an Exception when left is greater than right", () => {
+				Assert.DoesNotThrow(() => {
+					Assert.IsGreaterThanOrEqual(3, -1);
+				});
+			});
+		
+		
+			Test.Run("Assert.IsGreaterThanOrEqual(int left, int right) does not raise an Exception when left is equal to the right", () => {
+				Assert.DoesNotThrow(() => {
+					Assert.IsGreaterThanOrEqual(-1, -1);
+				});
+			});
+		
+		#endregion
 		}
 	}
 }
