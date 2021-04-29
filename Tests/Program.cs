@@ -175,14 +175,28 @@ namespace Tests
 				var exception = Assert.Throws<SuccessException>(() => {
 					Assert.Pass("Condition met.");
 				});
-				Assert.AreEqual(exception.Message, "Condition met.");
+				Assert.AreEqual("Condition met.", exception.Message);
+			});
+			
+			Test.Run("Assert.Pass() raises a SuccessException", () => {
+				var exception = Assert.Throws<SuccessException>(() => {
+					Assert.Pass();
+				});
+				Assert.AreEqual("", exception.Message);
 			});
 
 			Test.Run("Assert.Fail(string message) raises an Exception with message", () => {
 				var exception = Assert.Throws<Exception>(() => {
 					Assert.Fail("Fail now.");
 				});
-				Assert.AreEqual(exception.Message, "Fail now.");
+				Assert.AreEqual("Fail now.", exception.Message);
+			});
+			
+			Test.Run("Assert.Fail() raises an Exception", () => {
+				var exception = Assert.Throws<Exception>(() => {
+					Assert.Fail();
+				});
+				Assert.AreEqual("", exception.Message);
 			});
 		#endregion
 		
@@ -215,7 +229,7 @@ namespace Tests
 			});
 		#endregion
 
-		#region AreEqual/NotEqual string (ref)
+		#region AreEqual/NotEqual string
 			Test.Run("Assert.AreEqual(string expected, string actual) raises an Exception when actual is not equal to expected", () => {
 				var exception = Assert.Throws<Exception>(() => {
 					Assert.AreEqual("expected", "actual");
@@ -307,6 +321,8 @@ namespace Tests
 			});
 		#endregion
 		
+	#region Numerical Comparisons
+		
 		#region Assert.IsGreaterThan (int)
 		
 			Test.Run("Assert.IsGreaterThan(int left, int right) throws an Exception when right is greater than or left", () => {
@@ -354,6 +370,53 @@ namespace Tests
 			});
 		
 		#endregion
+		
+		#region Assert.IsLessThan (int)
+			Test.Run("Assert.IsLessThan(int left, int right) raises an exception when right is less than left", () => {
+				var exception = Assert.Throws<Exception>(() => {
+					Assert.IsLessThan(5, 2);
+				});
+				Assert.AreEqual("Expected 5 to be less than 2", exception.Message);
+			});
+			
+			Test.Run("Assert.IsLessThan(int left, int right) does not raise exception when left is less than right", () => {
+				Assert.DoesNotThrow(() => {
+					Assert.IsLessThan(2, 4);
+				});
+			});
+			
+			Test.Run("Assert.IsLessThan(int left, int right) raises an exception when right is equal to left", () => {
+				var exception = Assert.Throws<Exception>(() => {
+					Assert.IsLessThan(5, 5);
+				});
+				Assert.AreEqual("Expected 5 to be less than 5", exception.Message);
+			});
+		
+		#endregion
+		
+		#region Assert.IsLessThanOrEqual (int)
+			Test.Run("Assert.IsLessThanOrEqual(int left, int right) raises an exception when right is less than left", () => {
+				var exception = Assert.Throws<Exception>(() => {
+					Assert.IsLessThanOrEqual(5, 2);
+				});
+				Assert.AreEqual("Expected 5 to less than or equal to 2", exception.Message);
+			});
+			
+			Test.Run("Assert.IsLessThanOrEqual(int left, int right) does not raise exception when left is less than right", () => {
+				Assert.DoesNotThrow(() => {
+					Assert.IsLessThanOrEqual(2, 4);
+				});
+			});
+			
+			Test.Run("Assert.IsLessThanOrEqual(int left, int right) does not raise exception when left is equal to right", () => {
+				Assert.DoesNotThrow(() => {
+					Assert.IsLessThanOrEqual(3, 3);
+				});
+			});
+		
+		#endregion
+	
+	#endregion
 		}
 	}
 }

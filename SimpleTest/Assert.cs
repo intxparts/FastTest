@@ -100,17 +100,18 @@ namespace SimpleTest
 			}
 		}
 
-		public static void Pass(string message)
+		public static void Pass(string message="")
 		{
 			throw new SuccessException(message);
 		}
 
-		public static void Fail(string message)
+		public static void Fail(string message="")
 		{
 			throw new Exception(message);
 		}
 
 		#region Comparisons
+		
 		public static void IsGreaterThan(int left, int right)
 		{
 			if (left <= right)
