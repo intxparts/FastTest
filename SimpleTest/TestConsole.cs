@@ -20,8 +20,8 @@ namespace SimpleTest
 			}
 
 			Console.WriteLine($"Test Count: {Test.TestCount}");
-			Console.WriteLine($"Tests Passed: {Test.PassedTests}");
-			Console.WriteLine($"Tests Failed: {(Test.TestCount - Test.PassedTests)}");
+			Console.WriteLine($"Tests Passed: {Test.PassedTestCount}");
+			Console.WriteLine($"Tests Failed: {(Test.TestCount - Test.PassedTestCount)}");
 			Console.WriteLine($"elapsed milliseconds: {timeMilliseconds}");
 			Console.WriteLine($"elapsed seconds: {(timeMilliseconds / 1000.0)}");
 

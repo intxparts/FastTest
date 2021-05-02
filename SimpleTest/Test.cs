@@ -12,48 +12,57 @@ namespace SimpleTest
 		private static ConcurrentDictionary<string, Exception> _failedTestData = new ConcurrentDictionary<string, Exception>();
 		public static ConcurrentDictionary<string, Exception> FailedTestData => _failedTestData;
 
-		private static List<Task> _tasks = new List<Task>();
-		public static List<Task> Tasks => _tasks;
-
 		private static int _testCount = 0;
 		public static int TestCount => _testCount;
 
-		private static int _passedTests = 0;
-		public static int PassedTests => _passedTests;
+		private static int _passedTestCount = 0;
+		public static int PassedTestCount => _passedTestCount;
 
 		public static void Run<T>(string name, Action<T> fn, T input)
 		{
-			Interlocked.Add(ref _testCount, 1);
+			bool success = false;
 			try
 			{
 				fn.Invoke(input);
-				Interlocked.Add(ref _passedTests, 1);
+				success = true;
 			}
 			catch (SuccessException)
 			{
-				Interlocked.Add(ref _passedTests, 1);
+				success = true;
 			}
 			catch (Exception ex)
 			{
 				_failedTestData.TryAdd(name, ex);
+			}
+			finally
+			{
+				Interlocked.Add(ref _testCount, 1);
+				if (success)
+					Interlocked.Add(ref _passedTestCount, 1);
 			}
 		}
 
 		public static void Run(string name, Action fn)
 		{
-			Interlocked.Add(ref _testCount, 1);
+			bool success = false;
 			try
 			{
 				fn.Invoke();
-				Interlocked.Add(ref _passedTests, 1);
+				success = true;
 			}
 			catch (SuccessException)
 			{
-				Interlocked.Add(ref _passedTests, 1);
+				success = true;
 			}
 			catch (Exception ex)
 			{
 				_failedTestData.TryAdd(name, ex);
+			}
+			finally
+			{
+				Interlocked.Add(ref _testCount, 1);
+				if (success)
+					Interlocked.Add(ref _passedTestCount, 1);
 			}
 		}
 
