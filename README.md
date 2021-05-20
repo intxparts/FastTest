@@ -36,7 +36,8 @@ The idea of this SimpleTest project is to see how much performance we sacrifice 
 
 SimpleTest therefore is a barebones unit testing library. The idea is that you create a basic console application, include this library as a dependency and program your tests and test groups using the built-in functions.
 
-```
+```cs
+
 public class Program
 {
 	public static void Main(string [] args)
@@ -48,7 +49,7 @@ public class Program
 	{
 		for (int i = 0; i < 10; ++i)
 		{
-			Test.Run(() => {
+			Test.Run($"Test if {i} is even", () => {
 				RunIsEvenTest(i, i%2 == 0);
 			});
 		}
